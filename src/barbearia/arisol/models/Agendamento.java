@@ -19,6 +19,7 @@ public class Agendamento {
     private Cliente cliente;
     private Corte corte;
     private Date createdAt;
+    private boolean atendido;
     private boolean deleted;
 
     public Agendamento() {}
@@ -82,6 +83,15 @@ public class Agendamento {
 
     public Agendamento setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
+        return this;
+    }
+
+    public boolean isAtendido() {
+        return atendido;
+    }
+
+    public Agendamento setAtendido(boolean atendido) {
+        this.atendido = atendido;
         return this;
     }
 

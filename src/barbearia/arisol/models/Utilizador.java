@@ -133,5 +133,10 @@ public class Utilizador {
         this.id = id;
         return this;
     }
-        
+
+    @Override
+    public String toString() {
+        return this.getNome();
+    }
+    
 }

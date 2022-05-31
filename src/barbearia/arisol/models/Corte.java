@@ -14,7 +14,7 @@ public class Corte {
     
     private int id;
     private String nome;
-    private String descrcao;
+    private String descricao;
     private double preco;
     private Categoria categoria;
     private Utilizador user;
@@ -23,9 +23,9 @@ public class Corte {
 
     public Corte() {}
 
-    public Corte(String nome, String descrcao, double preco, Categoria categoria) {
+    public Corte(String nome, String descricao, double preco, Categoria categoria) {
         this.nome = nome;
-        this.descrcao = descrcao;
+        this.descricao = descricao;
         this.preco = preco;
         this.categoria = categoria;
     }
@@ -39,12 +39,12 @@ public class Corte {
         return this;
     }
 
-    public String getDescrcao() {
-        return descrcao;
+    public String getDescricao() {
+        return descricao;
     }
 
     public Corte setDescrcao(String descrcao) {
-        this.descrcao = descrcao;
+        this.descricao = descrcao;
         return this;
     }
 
@@ -100,6 +100,11 @@ public class Corte {
     public Corte setId(int id) {
         this.id = id;
         return this;
+    }
+
+    @Override
+    public String toString() {
+        return this.getNome();
     }
     
 }

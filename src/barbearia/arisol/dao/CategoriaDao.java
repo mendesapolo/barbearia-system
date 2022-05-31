@@ -23,7 +23,7 @@ import javax.swing.JOptionPane;
  */
 public class CategoriaDao implements IDao<Categoria>{
 
-    private Conexao conexao = null;
+    private Conexao conexao;
     
     public CategoriaDao() {
 //        this.conexao = new Conexao("barbearia.db");
@@ -62,7 +62,8 @@ public class CategoriaDao implements IDao<Categoria>{
                 stm.addBatch();
                 stm.executeUpdate();
             } catch (SQLException ex) {
-                GenericMessage.showErrorCreate();
+                ex.printStackTrace();
+                GenericMessage.showErrorUpdate();
             }
         }
     }

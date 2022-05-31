@@ -47,7 +47,7 @@ public class CorteDao implements IDao<Corte>{
             PreparedStatement stm= con.prepareStatement(sql);
         ){
             stm.setString(1, obj.getNome());
-            stm.setString(2, obj.getDescrcao());
+            stm.setString(2, obj.getDescricao());
             stm.setDouble(3, obj.getPreco());
             
             if(obj.getCategoria() != null)
@@ -60,18 +60,17 @@ public class CorteDao implements IDao<Corte>{
             stm.addBatch();
             stm.executeUpdate();
         } catch (SQLException ex) {
-            GenericMessage.showErrorCreate();
+            ex.printStackTrace();
         }
     }
 
     @Override
     public void update(Corte obj) {
-        String sql = "UPDATE cortes SET" +
+        String sql = "UPDATE cortes SET " +
                         "nome = ?," +
                         "descricao = ?," +
                         "preco = ?," +
                         "categoria_id = ?," +
-                        "user_id = ?," +
                         "is_deleted = ?" +
                         "WHERE id = ?";
         
@@ -80,16 +79,15 @@ public class CorteDao implements IDao<Corte>{
             PreparedStatement stm= con.prepareStatement(sql);
         ){
             stm.setString(1, obj.getNome());
-            stm.setString(2, obj.getDescrcao());
+            stm.setString(2, obj.getDescricao());
             stm.setDouble(3, obj.getPreco());
             stm.setInt(4, obj.getCategoria().getId());
-            stm.setInt(5, obj.getUser().getId());
-            stm.setBoolean(6, obj.isDeleted());
-            stm.setInt(7, obj.getId());
+            stm.setBoolean(5, obj.isDeleted());
+            stm.setInt(6, obj.getId());
             stm.addBatch();
             stm.executeUpdate();
         } catch (SQLException ex) {
-            GenericMessage.showErrorUpdate();
+            ex.printStackTrace();
         }
     }
 
@@ -105,7 +103,7 @@ public class CorteDao implements IDao<Corte>{
 
     @Override
     public List<Corte> findAll() {
-        String sql = "SELECT * FROM cortes WHERE is_deleted=0";
+        String sql = "SELECT * FROM cortes WHERE is_deleted = 0";
         List<Corte> list = new ArrayList<>();
         try(
             Connection con = this.conexao.getConnection();
@@ -115,7 +113,7 @@ public class CorteDao implements IDao<Corte>{
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             while(rs.next()){
                 Categoria categoria = new CategoriaDao().findById(rs.getInt("categoria_id"));
-                Utilizador user = new UtiizadorDao().findById(rs.getInt("user_id"));
+                Utilizador user = new UtilizadorDao().findById(rs.getInt("user_id"));
                 
                 Corte c = new Corte(rs.getString("nome"), rs.getString("descricao"), rs.getDouble("preco"), categoria);
                 c.setId(rs.getInt("id"))
@@ -145,7 +143,7 @@ public class CorteDao implements IDao<Corte>{
                 SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 
                 Categoria categoria = new CategoriaDao().findById(rs.getInt("categoria_id"));
-                Utilizador user = new UtiizadorDao().findById(rs.getInt("user_id"));
+                Utilizador user = new UtilizadorDao().findById(rs.getInt("user_id"));
                 
                 Corte c = new Corte(rs.getString("nome"), rs.getString("descricao"), rs.getDouble("preco"), categoria);
                 c.setId(rs.getInt("id"))

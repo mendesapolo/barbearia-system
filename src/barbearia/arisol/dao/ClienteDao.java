@@ -60,7 +60,7 @@ public class ClienteDao implements IDao<Cliente>{
 
     @Override
     public void update(Cliente obj) {
-        String sql = "UPDATE clientes SET" +
+        String sql = "UPDATE clientes SET " +
                         "nome = ?," +
                         "telefone = ?," +
                         "identidade = ?," +
@@ -97,7 +97,7 @@ public class ClienteDao implements IDao<Cliente>{
 
     @Override
     public List<Cliente> findAll() {
-        String sql = "SELECT * FROM clientes WHERE is_deleted=0";
+        String sql = "SELECT * FROM clientes WHERE is_deleted=0 ORDER BY id DESC";
         List<Cliente> list = new ArrayList<>();
         try(
             Connection con = this.conexao.getConnection();
@@ -106,7 +106,7 @@ public class ClienteDao implements IDao<Cliente>{
         ){
             SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
             while(rs.next()){
-                Utilizador user = new UtiizadorDao().findById(rs.getInt("user_id"));
+                Utilizador user = new UtilizadorDao().findById(rs.getInt("user_id"));
                 
                 Cliente c = new Cliente(rs.getString("nome"), rs.getString("telefone"), rs.getString("identidade"), true);
                 c.setId(rs.getInt("id"))

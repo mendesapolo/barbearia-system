@@ -71,5 +71,10 @@ public class Categoria {
         this.deleted = deleted;
         return this;
     }
+
+    @Override
+    public String toString() {
+        return this.getNome();
+    }
     
 }

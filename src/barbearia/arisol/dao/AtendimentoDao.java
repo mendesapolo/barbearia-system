@@ -51,33 +51,24 @@ public class AtendimentoDao implements IDao<Atendimento>{
             Connection con = this.conexao.getConnection();
             PreparedStatement stm= con.prepareStatement(sql);
         ){
-            stm.setDate(1, (Date) obj.getData());
+            stm.setString(1, new SimpleDateFormat("yyyy-MM-dd HH:mm").format(obj.getData()));
             stm.setDouble(2, obj.getValor());
             stm.setBoolean(3, obj.isAgenda());
-            
-            if(obj.getCorte() != null)
-                stm.setInt(4, obj.getCorte().getId());
-            
-            if(obj.getCliente() != null)
-                stm.setInt(5, obj.getCliente().getId());
-            
-            if(obj.getAgendamento()!= null)
-                stm.setInt(6, obj.getAgendamento().getId());
-            
-            if(obj.getUser()!= null)
-                stm.setInt(7, obj.getUser().getId());
-            
-            stm.setBoolean(9, false);
+            stm.setInt(4, obj.getCorte().getId());
+            stm.setInt(5, obj.getCliente().getId());
+            stm.setInt(6, 0);
+            stm.setInt(7, obj.getUser().getId());
+            stm.setBoolean(8, false);
             stm.addBatch();
             stm.executeUpdate();
         } catch (SQLException ex) {
-            GenericMessage.showErrorCreate();
+            ex.printStackTrace();
         }
     }
 
     @Override
     public void update(Atendimento obj) {
-        String sql = "UPDATE agendamentos SET" +
+        String sql = "UPDATE agendamentos SET " +
                         "data = ?," +
                         "valor = ?," +
                         "is_agenda = ?," +
@@ -92,7 +83,7 @@ public class AtendimentoDao implements IDao<Atendimento>{
             Connection con = this.conexao.getConnection();
             PreparedStatement stm= con.prepareStatement(sql);
         ){
-            stm.setDate(1, (Date) obj.getData());
+            stm.setString(1,  new SimpleDateFormat("yyyy-MM-dd HH:mm").format(obj.getData()));
             stm.setDouble(2, obj.getValor());
             stm.setBoolean(3, obj.isAgenda());
             
@@ -106,7 +97,7 @@ public class AtendimentoDao implements IDao<Atendimento>{
             stm.addBatch();
             stm.executeUpdate();
         } catch (SQLException ex) {
-            GenericMessage.showErrorUpdate();
+            ex.printStackTrace();
         }
     }
 
@@ -129,13 +120,13 @@ public class AtendimentoDao implements IDao<Atendimento>{
             PreparedStatement stm= con.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
         ){
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             
             while(rs.next()){
                 Corte corte = new CorteDao().findById(rs.getInt("corte_id"));
                 Cliente cliente = new ClienteDao().findById(rs.getInt("cliente_id"));
                 Agendamento agendamento = new AgendamentoDao().findById(rs.getInt("agenda_id"));
-                Utilizador user = new UtiizadorDao().findById(rs.getInt("user_id"));
+                Utilizador user = new UtilizadorDao().findById(rs.getInt("user_id"));
                 
                 Atendimento a = new Atendimento(formatter.parse(rs.getString("data")), rs.getDouble("valor"), user, corte, cliente);
                 a.setId(rs.getInt("id"))
@@ -168,7 +159,7 @@ public class AtendimentoDao implements IDao<Atendimento>{
                 Corte corte = new CorteDao().findById(rs.getInt("corte_id"));
                 Cliente cliente = new ClienteDao().findById(rs.getInt("cliente_id"));
                 Agendamento agendamento = new AgendamentoDao().findById(rs.getInt("agenda_id"));
-                Utilizador user = new UtiizadorDao().findById(rs.getInt("user_id"));
+                Utilizador user = new UtilizadorDao().findById(rs.getInt("user_id"));
                 
                 Atendimento a = new Atendimento(formatter.parse(rs.getString("data")), rs.getDouble("valor"), user, corte, cliente);
                 a.setId(rs.getInt("id"))
@@ -179,7 +170,7 @@ public class AtendimentoDao implements IDao<Atendimento>{
                 
                 return a;
             } catch (Exception ex) {
-                GenericMessage.showErrorList();
+                ex.printStackTrace();
             }
         }
         return null;

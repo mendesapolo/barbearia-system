@@ -11,7 +11,6 @@ import barbearia.arisol.models.Cliente;
 import barbearia.arisol.models.Corte;
 import barbearia.arisol.util.GenericMessage;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -40,14 +39,15 @@ public class AgendamentoDao implements IDao<Agendamento>{
                         "cliente_id," +
                         "corte_id," +
                         "created_at," +
-                        "is_deleted)" +
-                        "VALUES (?, ?, ?,  ?, ?, DATETIME('NOW', 'LOCALTIME'), ?);";
+                        "is_deleted," +
+                        "is_atendido)" +
+                        "VALUES (?, ?, ?,  ?, ?, DATETIME('NOW', 'LOCALTIME'), ?, ?);";
         
         try(
             Connection con = this.conexao.getConnection();
             PreparedStatement stm= con.prepareStatement(sql);
         ){
-            stm.setDate(1, (Date) obj.getData());
+            stm.setString(1, new SimpleDateFormat("yyyy-MM-dd HH:mm").format(obj.getData()));
             stm.setDouble(2, obj.getValor());
             stm.setBoolean(3, false);
             
@@ -58,39 +58,41 @@ public class AgendamentoDao implements IDao<Agendamento>{
                 stm.setInt(5, obj.getCorte().getId());
             
             stm.setBoolean(6, false);
+            stm.setBoolean(7, false);
             stm.addBatch();
             stm.executeUpdate();
         } catch (SQLException ex) {
-            GenericMessage.showErrorCreate();
+            ex.printStackTrace();
         }
     }
 
     @Override
     public void update(Agendamento obj) {
-        String sql = "UPDATE agendamentos SET" +
-                        "data = ?," +
-                        "valor = ?," +
-                        "is_cancelado = ?," +
-                        "categoria_id = ?," +
-                        "corte_id = ?," +
-                        "is_deleted = ?" +
+        String sql = "UPDATE agendamentos SET " +
+                        "data = ?, " +
+                        "valor = ?, " +
+                        "is_cancelado = ?, " +
+                        "cliente_id = ?, " +
+                        "corte_id = ?, " +
+                        "is_deleted = ?, " +
+                        "is_atendido = ? " +
                         "WHERE id = ?";
-        
         try(
             Connection con = this.conexao.getConnection();
             PreparedStatement stm= con.prepareStatement(sql);
         ){
-            stm.setDate(1, (Date) obj.getData());
+            stm.setString(1, new SimpleDateFormat("yyyy-MM-dd HH:mm").format(obj.getData()));
             stm.setDouble(2, obj.getValor());
             stm.setBoolean(3, obj.isCancelado());
             stm.setInt(4, obj.getCliente().getId());
             stm.setInt(5, obj.getCorte().getId());
             stm.setBoolean(6, obj.isDeleted());
-            stm.setInt(7, obj.getId());
+            stm.setBoolean(7, obj.isAtendido());
+            stm.setInt(8, obj.getId());
             stm.addBatch();
             stm.executeUpdate();
         } catch (SQLException ex) {
-            GenericMessage.showErrorUpdate();
+           ex.printStackTrace();
         }
     }
 
@@ -113,7 +115,7 @@ public class AgendamentoDao implements IDao<Agendamento>{
             PreparedStatement stm= con.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
         ){
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             
             while(rs.next()){
                 Cliente cliente = new ClienteDao().findById(rs.getInt("cliente_id"));
@@ -123,12 +125,13 @@ public class AgendamentoDao implements IDao<Agendamento>{
                 a.setId(rs.getInt("id"))
                     .setCreatedAt(formatter.parse(rs.getString("created_at")))
                     .setCancelado(rs.getBoolean("is_cancelado"))
+                    .setAtendido(rs.getBoolean("is_atendido"))
                     .setDeleted(rs.getBoolean("is_deleted"));
                 list.add(a);
             }
             
         } catch (Exception ex) {
-            GenericMessage.showErrorList();
+            ex.printStackTrace();
         }
         return list;
     }
@@ -153,6 +156,7 @@ public class AgendamentoDao implements IDao<Agendamento>{
                 a.setId(rs.getInt("id"))
                     .setCreatedAt(formatter.parse(rs.getString("created_at")))
                     .setCancelado(rs.getBoolean("is_cancelado"))
+                    .setAtendido(rs.getBoolean("is_atendido"))
                     .setDeleted(rs.getBoolean("is_deleted"));
                 
                 return a;

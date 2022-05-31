@@ -6,7 +6,6 @@ package barbearia.arisol.dao;
 
 import barbearia.arisol.configs.Conexao;
 import barbearia.arisol.interfaces.IDao;
-import barbearia.arisol.models.Categoria;
 import barbearia.arisol.models.Sistema;
 import barbearia.arisol.util.GenericMessage;
 import java.sql.Connection;
@@ -16,7 +15,6 @@ import java.sql.SQLException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JOptionPane;
 
 /**
  *
@@ -86,7 +84,7 @@ public class SistemaDao implements IDao<Sistema>{
             PreparedStatement stm= con.prepareStatement(sql);
             ResultSet rs = stm.executeQuery();
         ){
-            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm");
             while(rs.next()){
                 Sistema s = new Sistema(rs.getString("estabelecimento"), rs.getInt("taxa_agenda"));
                 s.setId(rs.getInt("id"))
@@ -128,6 +126,32 @@ public class SistemaDao implements IDao<Sistema>{
                 GenericMessage.showErrorList();
             }
         }
+        return null;
+    }
+    //ride gas pact second young unable dizzy clog spot toe unaware uniform
+
+    public Sistema getAtual() {
+            String sql = "SELECT * FROM sistema WHERE is_active = 1";
+            try(
+                Connection con = this.conexao.getConnection();
+                PreparedStatement stm= con.prepareStatement(sql);
+            ){
+                ResultSet rs  = stm.executeQuery();
+                if(!rs.isClosed()){
+                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                    Sistema s = new Sistema(rs.getString("estabelecimento"), rs.getInt("taxa_agenda"));
+                    s.setId(rs.getInt("id"))
+                    .setActive(rs.getBoolean("is_active"))
+                    .setCreatedAt(formatter.parse(rs.getString("created_at")));
+
+                    rs.close();
+                    return s;
+                }
+            } catch (Exception ex) {
+                ex.printStackTrace();
+                GenericMessage.showErrorList();
+            }
         return null;
     }
     

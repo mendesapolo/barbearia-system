@@ -25,7 +25,7 @@ public class Conexao {
     }
 
     public Conexao() {
-        this.url = "jdbc:sqlite:src/barbearia/arisol/configs/barbearia.db";
+        this.url = "jdbc:sqlite:barbearia.db";
         this.connection = null;
     }
 
